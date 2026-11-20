@@ -6,3 +6,4 @@ dist/
 
 # generated preview copies inside the session workspace
 .latex-studio-preview/
+*.tgz
