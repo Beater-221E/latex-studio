@@ -13,6 +13,67 @@ dsh plugin --profile desktop add github:Beater-221E/latex-studio
 
 ---
 
+## Install
+
+**Requirements** — DSH 0.2.x desktop/web; Node ≥ 22 on the DSH machine; a TeX
+distribution on the machine that builds (`pdflatex`/`xelatex`, optional
+`bibtex`/`biber`); for SSH workspaces the `dsh-ssh-toolkit` bundle (provides
+`sshPool`).
+
+**1. From GitHub (recommended)**
+
+```bash
+dsh plugin --profile desktop add github:Beater-221E/latex-studio
+```
+
+Pin a version:
+
+```bash
+dsh plugin --profile desktop add github:Beater-221E/latex-studio#v0.1.0
+```
+
+**2. From a release tarball**
+
+Download `latex-studio-0.1.0.tgz` from the
+[Releases](https://github.com/Beater-221E/latex-studio/releases) page, then:
+
+```bash
+dsh plugin --profile desktop add ./latex-studio-0.1.0.tgz
+```
+
+An HTTP(S) URL works too: `dsh plugin --profile desktop add https://…/latex-studio-0.1.0.tgz`.
+
+**3. Local development (link)**
+
+```bash
+git clone https://github.com/Beater-221E/latex-studio.git
+dsh plugin --profile desktop add link:./latex-studio
+```
+
+**4. Restart and verify**
+
+Fully quit DSH (not just the window) and start it again. Check in
+**Settings → Plugins** that the row for the plugin is enabled and active. Open a
+session, press **+** in the composer: **Open LaTeX project** should be listed
+(the plugin's tab type is also available from the right sidebar guide).
+
+**Upgrade** — repeat the install with a newer tag/tarball (remove first if pnpm
+refuses to override):
+
+```bash
+dsh plugin --profile desktop remove @local/latex-studio
+dsh plugin --profile desktop add github:Beater-221E/latex-studio#v0.2.0
+```
+
+**Uninstall**
+
+```bash
+dsh plugin --profile desktop remove @local/latex-studio
+```
+
+> The plugin package id is `@local/latex-studio`; that is the name to pass to
+> `remove` and the row shown in the plugin list.
+
 ## Why
 
 Most LaTeX editors compile **the file you opened**. That falls apart for a real
@@ -287,6 +348,56 @@ scripts/service-smoke.mjs  Real-project smoke run
 ```bash
 dsh plugin --profile desktop add github:Beater-221E/latex-studio
 ```
+
+## 安装
+
+**环境要求** — DSH 0.2.x（桌面版或 Web）；运行 DSH 的机器上 Node ≥ 22；执行编译的机器上有 TeX（`pdflatex`/`xelatex`，可选 `bibtex`/`biber`）；SSH 工作区需要安装 `dsh-ssh-toolkit`（提供 `sshPool`）。
+
+**方式一：从 GitHub 安装（推荐）**
+
+```bash
+dsh plugin --profile desktop add github:Beater-221E/latex-studio
+```
+
+指定版本：
+
+```bash
+dsh plugin --profile desktop add github:Beater-221E/latex-studio#v0.1.0
+```
+
+**方式二：从 Release 压缩包安装**
+
+在 [Releases](https://github.com/Beater-221E/latex-studio/releases) 页面下载 `latex-studio-0.1.0.tgz`，然后：
+
+```bash
+dsh plugin --profile desktop add ./latex-studio-0.1.0.tgz
+```
+
+也支持直接给 HTTP(S) 地址：`dsh plugin --profile desktop add https://…/latex-studio-0.1.0.tgz`。
+
+**方式三：本地开发（link）**
+
+```bash
+git clone https://github.com/Beater-221E/latex-studio.git
+dsh plugin --profile desktop add link:./latex-studio
+```
+
+**安装后：完全退出并重启 DSH**（不是只关窗口），然后在 **设置 → 插件** 里确认该插件已启用且状态 active。打开一个会话，点输入框的 **+**，应能看到 **打开 LaTeX 项目**；右栏引导页里也有对应的 tab 入口。
+
+**升级** — 用新 tag/压缩包重复安装（pnpm 拒绝覆盖时先移除）：
+
+```bash
+dsh plugin --profile desktop remove @local/latex-studio
+dsh plugin --profile desktop add github:Beater-221E/latex-studio#v0.2.0
+```
+
+**卸载**
+
+```bash
+dsh plugin --profile desktop remove @local/latex-studio
+```
+
+> 插件包名是 `@local/latex-studio`，卸载和插件列表里都按这个名字找。
 
 ## 为什么需要它
 

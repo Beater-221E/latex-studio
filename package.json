@@ -32,5 +32,26 @@
     "test": "node --test tests/*.test.mjs",
     "smoke": "node scripts/service-smoke.mjs"
   },
-  "license": "MIT"
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Beater-221E/latex-studio.git"
+  },
+  "homepage": "https://github.com/Beater-221E/latex-studio#readme",
+  "bugs": {
+    "url": "https://github.com/Beater-221E/latex-studio/issues"
+  },
+  "author": "Beater-221E",
+  "keywords": [
+    "deepseek-harness",
+    "dsh-plugin",
+    "latex",
+    "pdf",
+    "preview",
+    "annotation",
+    "codex-style"
+  ],
+  "engines": {
+    "node": ">=22"
+  }
 }
