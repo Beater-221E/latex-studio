@@ -56,13 +56,26 @@ report.compile = {
   ok: compile.ok,
   pdf: compile.pdf,
   passes: compile.passes,
+  skipped: compile.skipped === true,
   pages: compile.pages,
   errors: compile.errors,
   warnings: compile.warnings.slice(0, 3),
   durationMs: compile.durationMs,
   steps: compile.steps,
 };
-report.status = service.status(sessionId);
+
+
+if (compile.ok && compile.pdf) {
+  const published = await service.publishFile(sessionId, compile.pdf, { kind: 'local', root });
+  report.published = { path: published.path, bytes: published.bytes };
+  const bytes = await service.readBytes(sessionId, compile.pdf);
+  report.pdf = {
+    path: bytes.path,
+    bytes: bytes.bytes,
+    base64Head: bytes.base64.slice(0, 16),
+    decodedHead: Buffer.from(bytes.base64, 'base64').subarray(0, 5).toString('latin1'),
+  };
+}
 
 console.log(JSON.stringify(report, null, 2));
 process.exit(compile.ok ? 0 : 1);

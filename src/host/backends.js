@@ -77,6 +77,21 @@ function localBackend(root) {
     readText(rel) {
       return fs.promises.readFile(within(rel), 'utf8');
     },
+    readBytes(rel) {
+      return fs.promises.readFile(within(rel));
+    },
+    async mkdir(rel) {
+      await fs.promises.mkdir(within(rel), { recursive: true });
+    },
+    async writeBytes(rel, data) {
+      const abs = within(rel);
+      await fs.promises.mkdir(path.dirname(abs), { recursive: true });
+      await fs.promises.writeFile(abs, data);
+      return { path: rel, bytes: data.length };
+    },
+    async removeTree(rel) {
+      await fs.promises.rm(within(rel), { recursive: true, force: true });
+    },
     async writeText(rel, text) {
       const abs = within(rel);
       await fs.promises.mkdir(path.dirname(abs), { recursive: true });
@@ -84,7 +99,8 @@ function localBackend(root) {
       return { path: rel, bytes: Buffer.byteLength(text, 'utf8') };
     },
     run(argv, opts = {}) {
-      return runProcess(argv, { cwd: resolvedRoot, timeoutMs: opts.timeoutMs });
+      const cwd = typeof opts.cwd === 'string' && opts.cwd ? within(opts.cwd) : resolvedRoot;
+      return runProcess(argv, { cwd, timeoutMs: opts.timeoutMs });
     },
     dispose() {},
   };
@@ -119,14 +135,62 @@ async function remoteBackend(ctx, route, options = {}) {
     readText(rel) {
       return fsApi.readText(within(rel));
     },
+    async readBytes(rel) {
+      return Buffer.from(await fsApi.readBytes(within(rel)));
+    },
+    async mkdir(rel) {
+      await conn.exec(`mkdir -p ${shellQuote(within(rel))}`, { timeoutMs: 20000 });
+    },
+    async writeBytes(rel, data) {
+      const abs = within(rel);
+      await fsApi.writeFileAtomic(abs, data);
+      return { path: rel, bytes: data.length };
+    },
+    async removeTree(rel) {
+      await conn.exec(`rm -rf ${shellQuote(within(rel))}`, { timeoutMs: 20000 });
+    },
+    async runScript(script, opts = {}) {
+      const cwd = typeof opts.cwd === 'string' && opts.cwd ? within(opts.cwd) : root;
+      const body = `cd ${shellQuote(cwd)} && ${script}`;
+      const command = options.remoteWrapper ? `${options.remoteWrapper} ${shellQuote(body)}` : body;
+      const result = await conn.exec(command, { timeoutMs: opts.timeoutMs ?? 180000, maxStdoutBytes: 16 * 1024 * 1024 });
+      return { code: result.code, stdout: result.stdout, stderr: result.stderr };
+    },
     async writeText(rel, text) {
       const abs = within(rel);
       await fsApi.writeFileAtomic(abs, text);
       return { path: rel, bytes: Buffer.byteLength(text, 'utf8') };
     },
+    async readTextHeads(paths, limit = 8192) {
+      if (!Array.isArray(paths) || paths.length === 0) return {};
+      const bounded = Number.isFinite(limit) ? Math.max(256, Math.min(65536, Math.trunc(limit))) : 8192;
+      const script = paths.map((rel, index) => {
+        const abs = within(rel);
+        return `printf '\\n@@LATEX_HEAD:${index}@@\\n'; head -c ${bounded} ${shellQuote(abs)} 2>/dev/null`;
+      }).join('; ');
+      const body = `cd ${shellQuote(root)} && ${script}`;
+      const command = options.remoteWrapper ? `${options.remoteWrapper} ${shellQuote(body)}` : body;
+      const result = await conn.exec(command, { timeoutMs: 90000, maxStdoutBytes: 16 * 1024 * 1024 });
+      const text = String(result.stdout || '');
+      const parts = text.split(/\n@@LATEX_HEAD:(\d+)@@\n/);
+      const heads = {};
+      for (let index = 1; index < parts.length; index += 2) {
+        const position = Number(parts[index]);
+        if (Number.isInteger(position) && paths[position]) heads[paths[position]] = parts[index + 1] ?? '';
+      }
+      return heads;
+    },
+    async runBatch(commands, opts = {}) {
+      const cwd = typeof opts.cwd === 'string' && opts.cwd ? within(opts.cwd) : root;
+      const script = `cd ${shellQuote(cwd)} && ${commands.map((argv) => argv.map(shellQuote).join(' ')).join(' ; ')}`;
+      const command = options.remoteWrapper ? `${options.remoteWrapper} ${shellQuote(script)}` : script;
+      const result = await conn.exec(command, { timeoutMs: opts.timeoutMs ?? 180000, maxStdoutBytes: 8 * 1024 * 1024 });
+      return { code: result.code, stdout: result.stdout, stderr: result.stderr };
+    },
     async run(argv, opts = {}) {
       const commandLine = argv.map(shellQuote).join(' ');
-      const script = `cd ${shellQuote(root)} && ${commandLine}`;
+      const cwd = typeof opts.cwd === 'string' && opts.cwd ? within(opts.cwd) : root;
+      const script = `cd ${shellQuote(cwd)} && ${commandLine}`;
       const command = options.remoteWrapper ? `${options.remoteWrapper} ${shellQuote(script)}` : script;
       const result = await conn.exec(command, { timeoutMs: opts.timeoutMs ?? 180000, maxStdoutBytes: 8 * 1024 * 1024 });
       return { code: result.code, stdout: result.stdout, stderr: result.stderr };
