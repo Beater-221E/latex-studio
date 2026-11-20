@@ -1,0 +1,7 @@
+# LaTeX Studio bundle patch: one Host row; the Client half ships in `./client`.
+- insert:
+    - id: latex-studio
+      name: '@local/latex-studio'
+      config:
+        engine: pdflatex
+        maxPasses: 4

@@ -1,0 +1,7 @@
+{
+  "meta": {
+    "title": "LaTeX Studio",
+    "description": "Project-level LaTeX workspace: browse a repository, compile the whole project with the right main file, read diagnostics and preview the PDF in the sidebar.",
+    "detail": "docs/DETAIL.md"
+  }
+}

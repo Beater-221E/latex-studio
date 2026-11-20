@@ -1,0 +1,36 @@
+{
+  "name": "@local/latex-studio",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Project-level LaTeX workspace for DeepSeek Harness: edit a repository, build it with the right main file, preview the PDF and read diagnostics without leaving the app.",
+  "exports": {
+    ".": "./index.js",
+    "./client": "./client.js",
+    "./locale/*.json": "./locale/*.json",
+    "./icon": "./icon.svg"
+  },
+  "files": [
+    "index.js",
+    "client.js",
+    "src",
+    "locale/*.json",
+    "docs",
+    "icon.svg",
+    "cordis.patch.yml"
+  ],
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    },
+    "client": {
+      "platform": "web",
+      "immediately": true
+    }
+  },
+  "scripts": {
+    "test": "node --test tests/",
+    "smoke": "node scripts/build-smoke.mjs"
+  },
+  "license": "MIT"
+}

@@ -1,0 +1,7 @@
+{
+  "meta": {
+    "title": "LaTeX 工作台",
+    "description": "项目级 LaTeX 工作区：浏览仓库、按主文件编译整个工程、查看诊断，并在侧栏分屏预览 PDF。",
+    "detail": "docs/DETAIL.md"
+  }
+}
