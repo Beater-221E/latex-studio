@@ -1501,6 +1501,12 @@ window.__ModuleLoader__.load({
       };
 
       const hideBar = () => { bar.style.display = 'none'; };
+      const clearAnnotations = () => {
+        if (annotations.length === 0) return;
+        annotations = [];
+        nextId = 1;
+        renderPanel();
+      };
       const pageOf = (element) => {
         try {
           const layer = element && element.closest ? element.closest('.textLayer') : null;
@@ -1638,6 +1644,12 @@ window.__ModuleLoader__.load({
         addAnnotation();
       };
 
+      const disposeProject = subscribeProject(() => clearAnnotations());
+      const sessionStore = uiSession && uiSession.current;
+      const disposeSession = sessionStore && typeof sessionStore.subscribe === 'function'
+        ? sessionStore.subscribe(() => clearAnnotations())
+        : () => {};
+
       quoteButton.addEventListener('mousedown', onBarDown);
       annotateButton.addEventListener('mousedown', onBarDown);
       quoteButton.addEventListener('click', onQuote);
@@ -1662,6 +1674,8 @@ window.__ModuleLoader__.load({
         document.removeEventListener('keydown', onKeyDown);
         window.removeEventListener('scroll', onScroll, true);
         window.removeEventListener('resize', onScroll);
+        try { disposeProject(); } catch { /* ignore */ }
+        try { disposeSession(); } catch { /* ignore */ }
         bar.remove();
         panel.remove();
       };
