@@ -1,4 +1,12 @@
 # LaTeX Studio bundle patch: one Host row; the Client half ships in `./client`.
+#
+# `remoteWrapper` is only needed when the session workspace is an SSH workspace
+# whose TeX lives behind another hop, for example a Kubernetes pod:
+#
+#   remoteWrapper: >-
+#     bash -lc '. /etc/profile.d/dsmlp-login.sh;
+#     kubectl exec "$(cat ~/.dsmlp/current_pod)" -- bash -lc "$1"' --
+#
 - insert:
     - id: latex-studio
       name: '@local/latex-studio'

@@ -49,6 +49,24 @@ Sidebar — next to the editor, without leaving DSH.
 | `timeoutMs` | `180000` | Timeout of one process |
 | `remoteWrapper` | `''` | Remote-shell prefix, e.g. `kubectl exec <pod> -- bash -lc` |
 
+### Remote workspace where TeX lives in a pod
+
+The wrapper is prepended to one single-quoted build script, so it must end where
+that script is the last argument. On the UCSD DSMLP cluster (login node has no
+TeX, the pod does) the verified value is:
+
+```yaml
+config:
+  remoteWrapper: >-
+    bash -lc '. /etc/profile.d/dsmlp-login.sh;
+    kubectl exec "$(cat ~/.dsmlp/current_pod)" -- bash -lc "$1"' --
+```
+
+The `--` and `"$1"` are load-bearing: the outer shell receives the build script
+as `$1` and hands it to the pod's `bash -lc`, while the profile sourcing gives
+`kubectl` its kubeconfig. A fixed pod works too:
+`kubectl exec yuw332-XXXX -- bash -lc`.
+
 ## Using it
 
 1. Open the right Sidebar and add the **LaTeX Studio** tab from the guide.
