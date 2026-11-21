@@ -39,19 +39,19 @@ dsh plugin --profile desktop add github:Beater-221E/latex-studio
 Pin a version:
 
 ```bash
-dsh plugin --profile desktop add github:Beater-221E/latex-studio#v0.1.1
+dsh plugin --profile desktop add github:Beater-221E/latex-studio#v0.1.2
 ```
 
 **2. From a release tarball**
 
-Download `latex-studio-0.1.1.tgz` from the
+Download `latex-studio-0.1.2.tgz` from the
 [Releases](https://github.com/Beater-221E/latex-studio/releases) page, then:
 
 ```bash
-dsh plugin --profile desktop add ./latex-studio-0.1.1.tgz
+dsh plugin --profile desktop add ./latex-studio-0.1.2.tgz
 ```
 
-An HTTP(S) URL works too: `dsh plugin --profile desktop add https://…/latex-studio-0.1.1.tgz`.
+An HTTP(S) URL works too: `dsh plugin --profile desktop add https://…/latex-studio-0.1.2.tgz`.
 
 **3. Local development (link)**
 
@@ -104,6 +104,7 @@ passages at once — into the composer.
 | Project discovery | Scans one level for `.tex`, ranks `% !TEX root` and `\documentclass` candidates |
 | Whole-project build | `pdflatex` / `xelatex` / `lualatex`; only the bibliography tool the `.aux` asks for; the last pass only when the log reports reruns |
 | Skip unchanged | Reuses the existing PDF when no source is newer (“no changes, reused”) |
+| Refresh | Re-reads the file list and the open file from disk without reloading the page |
 | Editor | Tree + source pane, `Ctrl+S` save, `Ctrl+Enter` compile |
 | Diagnostics | `file:line: message`, missing `.sty`/`.bbl`, undefined references; click to jump |
 | Preview | Publishes the build into the workspace and opens DSH's **native PDF.js** preview (selectable text, zoom) |
@@ -257,7 +258,10 @@ Page numbers are inferred from the order of text layers in the preview.
 
 **Switch project…** reopens the dialog. Each project keeps its own preview copy
 path, discovery cache and annotation basket. Re-opening a project renders from
-cache immediately and refreshes in the background; **Rescan** forces a refresh.
+cache immediately and refreshes in the background. When the repository changes
+outside DSH, press **↻ Refresh** in the Studio bar: it clears the cached file
+texts and re-reads the file list, main-file candidates and the open file (unsaved
+edits are confirmed first).
 
 ### 10. Workspace vs project directory
 

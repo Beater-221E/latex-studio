@@ -1,6 +1,6 @@
 {
   "name": "@local/latex-studio",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "private": true,
   "type": "module",
   "description": "Project-level LaTeX workspace for DeepSeek Harness: edit a repository, build it with the right main file, preview the PDF and read diagnostics without leaving the app.",

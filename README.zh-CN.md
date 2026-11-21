@@ -33,18 +33,18 @@ dsh plugin --profile desktop add github:Beater-221E/latex-studio
 指定版本：
 
 ```bash
-dsh plugin --profile desktop add github:Beater-221E/latex-studio#v0.1.1
+dsh plugin --profile desktop add github:Beater-221E/latex-studio#v0.1.2
 ```
 
 **方式二：从 Release 压缩包安装**
 
-在 [Releases](https://github.com/Beater-221E/latex-studio/releases) 页面下载 `latex-studio-0.1.1.tgz`，然后：
+在 [Releases](https://github.com/Beater-221E/latex-studio/releases) 页面下载 `latex-studio-0.1.2.tgz`，然后：
 
 ```bash
-dsh plugin --profile desktop add ./latex-studio-0.1.1.tgz
+dsh plugin --profile desktop add ./latex-studio-0.1.2.tgz
 ```
 
-也支持直接给 HTTP(S) 地址：`dsh plugin --profile desktop add https://…/latex-studio-0.1.1.tgz`。
+也支持直接给 HTTP(S) 地址：`dsh plugin --profile desktop add https://…/latex-studio-0.1.2.tgz`。
 
 **方式三：本地开发（link）**
 
@@ -84,6 +84,7 @@ LaTeX Studio 把一个**仓库**当成一个项目：自动找主 `.tex`、在�
 | 项目发现 | 扫项目根一层的 `.tex`，按 `% !TEX root`、文件名、目录深度打分 |
 | 项目级编译 | `pdflatex`/`xelatex`/`lualatex`；只跑 `.aux` 需要的 biber 或 bibtex；日志无 rerun 提示时省略最后一遍 |
 | 无改动跳过 | 源码都不比 PDF 新时直接复用，显示「无改动，复用」 |
+| 刷新 | 不刷新页面，重新从磁盘读取文件列表与当前文件 |
 | 编辑器 | 文件树 + 源码编辑，`Ctrl+S` 保存，`Ctrl+Enter` 编译 |
 | 诊断 | `file:line: message`、缺失 `.sty`/`.bbl`、未定义引用；点击跳行 |
 | 预览 | 产物发布到工作区，用 DSH **原生 PDF.js** 预览（文字可选中、可缩放） |
@@ -197,7 +198,9 @@ LaTeX Studio 把一个**仓库**当成一个项目：自动找主 `.tex`、在�
 
 ### 9. 切换项目 / 多项目
 
-**切换项目…** 打开项目弹窗。每个项目有独立的预览副本路径、发现缓存和批注篮；再次打开同一项目先用缓存立即渲染，后台静默刷新，「重新扫描」强制刷新。
+**切换项目…** 打开项目弹窗。每个项目有独立的预览副本路径、发现缓存和批注篮；再次打开同一项目先用缓存立即渲染，后台静默刷新。
+
+论文仓库经常在 DSH 外部被修改（git pull、Overleaf 同步、脚本生成文件）。这时点 Studio 顶部的 **↻ 刷新**：它会清空缓存的文件内容，重新读取文件列表、主文件候选和当前打开的文件（有未保存修改会先确认）。
 
 ### 10. 工作区与项目目录
 

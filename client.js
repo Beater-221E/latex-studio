@@ -50,6 +50,8 @@ window.__ModuleLoader__.load({
       chooseMain: 'Choose a main .tex file first.',
       discardEdits: 'Discard unsaved changes?',
       rescan: 'Rescan',
+      refresh: 'Refresh',
+      refreshHint: 'Re-read the project from disk (file list and open file)',
       buildFailed: 'Build failed',
       requestFailed: 'LaTeX request failed',
       noFile: 'Select a file to edit',
@@ -108,6 +110,8 @@ window.__ModuleLoader__.load({
       chooseMain: '请先选择一个主 .tex 文件。',
       discardEdits: '放弃未保存的修改？',
       rescan: '重新扫描',
+      refresh: '刷新',
+      refreshHint: '重新从磁盘读取项目（文件列表与当前文件）',
       buildFailed: '编译失败',
       requestFailed: 'LaTeX 请求失败',
       noFile: '选择一个文件开始编辑',
@@ -734,6 +738,7 @@ window.__ModuleLoader__.load({
       const [showLog, setShowLog] = useState(false);
       const [showWarnings, setShowWarnings] = useState(false);
       const [goto, setGoto] = useState(null);
+      const [refreshing, setRefreshing] = useState(false);
 
       const call = useCallback(async (method, ...args) => {
         if (!sessionId) throw new Error('this page has no session');
@@ -824,6 +829,22 @@ window.__ModuleLoader__.load({
           setPhase('error');
         }
       }, [applyDiscovery, cache, call, openedProject, prefsKey, sessionId]);
+
+      // The repository changes outside DSH all the time: re-read the file list,
+      // the main-file candidates and the open file without a page reload.
+      const refresh = useCallback(async () => {
+        if (dirty && !window.confirm(t('discardEdits'))) return;
+        setRefreshing(true);
+        setError('');
+        try {
+          cache.texts.clear();
+          await load(selectedProject, true);
+        } catch (refreshError) {
+          setError(refreshError && refreshError.message ? refreshError.message : String(refreshError));
+        } finally {
+          setRefreshing(false);
+        }
+      }, [cache, dirty, load, selectedProject, t]);
 
       useEffect(() => subscribeProject(() => {
         setOpenedProject(readProject(sessionId));
@@ -1043,7 +1064,7 @@ window.__ModuleLoader__.load({
           h('div', { style: { color: COLORS.danger, fontWeight: 600 } }, t('buildFailed')),
           h('div', null, error || t('requestFailed')),
           h('div', { style: { display: 'flex', gap: 6 } },
-            h('button', { type: 'button', style: S.button, onClick: () => { load(0, true); } }, t('rescan')),
+            h('button', { type: 'button', style: S.button, onClick: refresh }, t('refresh')),
             h('button', { type: 'button', style: S.button, onClick: () => { if (typeof openPicker === 'function') openPicker(); } }, t('openProject'))));
       }
 
@@ -1062,6 +1083,13 @@ window.__ModuleLoader__.load({
           onClick: () => setShowTree((value) => !value),
         }, showTree ? '◧' : '▢'),
         h('span', { style: { marginLeft: 'auto', display: 'flex', gap: 6 } },
+          h('button', {
+            type: 'button',
+            style: refreshing ? S.buttonDisabled : S.button,
+            disabled: refreshing,
+            title: t('refreshHint'),
+            onClick: refresh,
+          }, refreshing ? '↻ …' : `↻ ${t('refresh')}`),
           h('button', { type: 'button', style: S.button, onClick: () => { if (typeof openPicker === 'function') openPicker(); } }, openedProject ? t('switchProject') : t('openProject'))),
       );
 
@@ -1192,7 +1220,7 @@ window.__ModuleLoader__.load({
           h('span', { style: { display: 'flex', gap: 8, flexShrink: 0 } },
             result ? h('span', { style: { cursor: 'pointer' }, onClick: () => setShowLog((open) => !open) },
               showLog ? t('hideLog') : t('log')) : null,
-            h('span', { style: { cursor: 'pointer' }, onClick: () => load(selectedProject, true) }, t('rescan')))),
+            h('span', { style: { cursor: 'pointer' }, onClick: refresh }, `↻ ${t('refresh')}`))),
       );
     }
 
