@@ -10,6 +10,16 @@
 dsh plugin --profile desktop add github:Beater-221E/latex-studio
 ```
 
+## 界面截图
+
+| 在输入框「+」菜单打开项目 | Studio：项目树、编辑器、原生 PDF 预览 |
+|---|---|
+| ![输入框 + 菜单里的「打开 LaTeX 项目」](docs/images/composer-menu.png) | ![LaTeX Studio 右侧栏：项目树、编辑器与 PDF 预览](docs/images/studio.png) |
+
+| 在 PDF 里选中文字 | 同时批注多段、最后一起提交 |
+|---|---|
+| ![PDF 选区上方的「引用 / 加批注」浮动条](docs/images/pdf-quote-bar.png) | ![批注篮：逐条写要求，全部插入对话](docs/images/annotation-basket.png) |
+
 ## 安装
 
 **环境要求** — DSH 0.2.x（桌面版或 Web）；运行 DSH 的机器上 Node ≥ 22；执行编译的机器上有 TeX（`pdflatex`/`xelatex`，可选 `bibtex`/`biber`）；SSH 工作区需要安装 `dsh-ssh-toolkit`（提供 `sshPool`）。

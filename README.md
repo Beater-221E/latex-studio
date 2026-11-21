@@ -13,6 +13,16 @@ dsh plugin --profile desktop add github:Beater-221E/latex-studio
 
 ---
 
+## Screenshots
+
+| Open a project | Studio: tree, editor, native preview |
+|---|---|
+| ![Open LaTeX project in the composer menu](docs/images/composer-menu.png) | ![LaTeX Studio tab with project tree, editor and PDF preview](docs/images/studio.png) |
+
+| Select text in the PDF | Annotate several passages at once |
+|---|---|
+| ![Floating Quote / Annotate bar over a PDF selection](docs/images/pdf-quote-bar.png) | ![Annotation basket with per-item instructions and Insert all](docs/images/annotation-basket.png) |
+
 ## Install
 
 **Requirements** — DSH 0.2.x desktop/web; Node ≥ 22 on the DSH machine; a TeX
